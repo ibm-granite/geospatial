@@ -1,0 +1,33 @@
+[build-system]
+requires = [ "setuptools" ]
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = "granite-geospatial-ocean"
+version = "1.0.0"
+description = "Granite ocean colour gfm with S3"
+license = { "text" = "Apache License, Version 2.0" }
+readme = "README.md"
+requires-python = ">=3.12"
+keywords = ["fine-tuning", "geospatial foundation models", "ocean-colour"]
+
+dependencies = [
+  "terratorch==1.1",
+]
+
+[project.optional-dependencies]
+colab = [
+  "gdown",
+]
+dev = [
+  "pre-commit",
+  "pytest",
+  "ruff",
+  "detect-secrets @ git+https://github.com/ibm/detect-secrets.git@master#egg=detect-secrets"
+]
+notebooks = [
+  "jupyter",
+]
+
+[tool.setuptools.packages]
+find = {}

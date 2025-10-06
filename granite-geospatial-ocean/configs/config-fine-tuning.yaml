@@ -1,0 +1,202 @@
+# lightning.pytorch==2.1.1
+seed_everything: 42
+out_dtype: float32
+custom_modules_path: ./../custom_modules/
+### Trainer configuration
+trainer:
+  accelerator: auto
+  strategy: auto
+  devices: auto
+  num_nodes: 1
+  # precision: 16-mixed
+  logger:
+    class_path: TensorBoardLogger
+    init_args:
+      save_dir: ./../data/
+      name: model_runs
+  callbacks:
+    - class_path: LearningRateMonitor
+      init_args:
+        logging_interval: epoch
+    - class_path: EarlyStopping
+      init_args:
+        monitor: val/loss
+        patience: 30
+  max_epochs: 30
+  check_val_every_n_epoch: 1
+  log_every_n_steps: 5
+  enable_checkpointing: true
+  default_root_dir: ./../data/
+
+### Data configuration
+data:
+  class_path: terratorch.datamodules.GenericNonGeoPixelwiseRegressionDataModule
+  init_args:
+    batch_size: 8
+    num_workers: 2
+    train_transform:
+      - class_path: albumentations.HorizontalFlip
+        init_args:
+          p: 0.5    
+      - class_path: albumentations.RandomCrop
+        init_args:
+            height: 42
+            width: 42
+      - class_path: albumentations.Rotate
+        init_args:
+          limit: 30
+          border_mode: 0 # cv2.BORDER_CONSTANT
+          value: 0
+          # mask_value: 1
+          p: 0.5
+      - class_path: ToTensorV2
+    # Specify all bands which are in the input data. 
+    # -1 are placeholders for bands that are in the data but that we will discard
+    dataset_bands: 
+      - Oa01_reflectance
+      - Oa02_reflectance
+      - Oa03_reflectance
+      - Oa04_reflectance
+      - Oa05_reflectance
+      - Oa06_reflectance
+      - Oa07_reflectance
+      - Oa08_reflectance
+      - Oa09_reflectance
+      - Oa10_reflectance
+      - Oa11_reflectance
+      - Oa12_reflectance
+      - Oa16_reflectance
+      - Oa17_reflectance
+      - Oa18_reflectance
+      - Oa21_reflectance
+      - SST
+    output_bands: #Specify the bands which are used from the input data.
+      - Oa01_reflectance
+      - Oa02_reflectance
+      - Oa03_reflectance
+      - Oa04_reflectance
+      - Oa05_reflectance
+      - Oa06_reflectance
+      - Oa07_reflectance
+      - Oa08_reflectance
+      - Oa09_reflectance
+      - Oa10_reflectance
+      - Oa11_reflectance
+      - Oa12_reflectance
+      - Oa16_reflectance
+      - Oa17_reflectance
+      - Oa18_reflectance
+      - Oa21_reflectance
+    rgb_indices:
+      - 2
+      - 1
+      - 0
+    # Directory roots to training, validation and test datasplits:
+    test_data_root: ./../data/fine-tuning
+    test_label_data_root: ./../data/fine-tuning
+    test_split: ./../data/fine-tuning/test_data.txt
+    train_data_root: ./../data/fine-tuning
+    train_label_data_root: ./../data/fine-tuning
+    train_split: ./../data/fine-tuning/train_data.txt
+    val_data_root: ./../data/fine-tuning
+    val_label_data_root: ./../data/fine-tuning
+    val_split: ./../data/fine-tuning/val_data.txt
+    img_grep: "*_img.tif"
+    label_grep: "*_lab.tif"
+    means: # Mean value of the training dataset per band
+    - 11378.33724842
+    - 11379.51141294
+    - 11291.99698672
+    - 11116.38807044
+    - 10898.95680699
+    - 10686.41604621
+    - 10466.67864162
+    - 10456.52999209
+    - 10462.41327758
+    - 10464.24100298
+    - 10443.59591923
+    - 10448.53157824
+    - 10470.36129347
+    - 10454.74328843 
+    - 10453.79858959
+    - 10452.88001737
+    stds: # Standard deviation of the training dataset per band
+    - 3125.36214152
+    - 3118.65965249
+    - 3088.88720386
+    - 3055.0881767
+    - 3026.73186213
+    - 2997.72812315
+    - 2968.12838628
+    - 2968.75857855
+    - 2969.94390514
+    - 2970.39202078
+    - 2964.1543642
+    - 2973.0155451 
+    - 2985.89318262
+    - 2975.50852528
+    - 2973.00652761
+    - 2973.00330406
+    # Nodata value in label data 
+    no_label_replace: -1
+    # Nodata value in the input data
+    no_data_replace: 0
+### Model configuration
+model:
+  class_path: terratorch.tasks.PixelwiseRegressionTask 
+  init_args:
+    model_args:
+      backbone_pretrained: true
+      backbone: prithvi_s3_v1
+      backbone_pretrained_cfg_overlay:
+        file: ./../data/checkpoints/checkpoint.pt
+      backbone_pretrain_img_size: 42
+      backbone_drop_path: 0.1
+      backbone_bands:
+        - Oa01_reflectance
+        - Oa02_reflectance
+        - Oa03_reflectance
+        - Oa04_reflectance
+        - Oa05_reflectance
+        - Oa06_reflectance
+        - Oa07_reflectance
+        - Oa08_reflectance
+        - Oa09_reflectance
+        - Oa10_reflectance
+        - Oa11_reflectance
+        - Oa12_reflectance
+        - Oa16_reflectance
+        - Oa17_reflectance
+        - Oa18_reflectance
+        - Oa21_reflectance
+      head_dropout: 0.16194593880230534
+      head_channel_list: [64]
+      necks:
+        - name: SelectIndices
+          indices: [2, 5, 8, 11]
+        - name: ReshapeTokensToImage
+        - name: LearnedInterpolateToPyramidal
+      decoder: UNetDecoder
+      decoder_channels: [256, 128, 64, 32]
+      head_dropout: 0.1
+    loss: rmse
+    ignore_index: -1
+    freeze_backbone: false
+    freeze_decoder: false
+    model_factory: EncoderDecoderFactory
+    tiled_inference_parameters:
+      h_crop: 64
+      h_stride: 4
+      w_crop: 64
+      w_stride: 4
+      delta: 8
+      average_patches: true
+optimizer:
+  class_path: torch.optim.AdamW
+  init_args:
+    lr: 0.00012
+    weight_decay: 0.3
+lr_scheduler:
+  class_path: ReduceLROnPlateau
+  init_args:
+    monitor: val/loss
