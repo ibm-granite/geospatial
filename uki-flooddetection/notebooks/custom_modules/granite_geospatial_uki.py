@@ -59,8 +59,8 @@ def _cfg(file: Path = "", **kwargs) -> dict:
 default_cfgs = generate_default_cfgs(
     {
         "granite-geospatial-uki": {
-            "hf_hub_id": "ibm-nasa-geospatial/Prithvi-100M",
-            "hf_hub_filename": "Prithvi_100M.pt",  # TODO - to modify
+            "hf_hub_id": "ibm-granite/granite-geospatial-uki",
+            "hf_hub_filename": "granite_geospatial_uki.pt",
         }
     }
 )
