@@ -8,7 +8,7 @@ Public notebooks and utilities for running inference and fine tuning
 ```sh
 git clone https://github.com/ibm-granite/geospatial.git
 ```
-2. Set up a virtual environment. Python 3.10 is recommended.
+2. Set up a virtual environment. Python 3.12 is recommended.
 3. Activate the virtual environment. 
 4. Install the relevant packages. This will depend on where you're running the notebooks.
   - on Google Colab `pip install -e ./geospatial/uki-flooddetection[colab]` 

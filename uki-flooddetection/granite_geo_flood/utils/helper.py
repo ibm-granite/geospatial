@@ -5,6 +5,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+import yaml
 from global_land_mask import globe
 from tifffile import imread
 from torchmetrics.classification import (
@@ -12,6 +13,23 @@ from torchmetrics.classification import (
     MulticlassJaccardIndex,
 )
 from xarray import DataArray
+
+
+def overwrite_checkpoint_in_config(
+    config_file: str | Path, new_checkpoint: str | Path
+) -> None:
+    """this will overwrite the 'backbone_ckpt_path' item in a terratorch config
+    file with a checkpoint that a user specifies"""
+
+    with open(config_file, "r") as f:
+        config_contents = yaml.safe_load(f)
+
+    config_contents["model"]["init_args"]["model_args"]["backbone_ckpt_path"] = str(
+        new_checkpoint
+    )
+
+    with open(config_file, "w") as f:
+        yaml.dump(config_contents, f, default_flow_style=False, sort_keys=False)
 
 
 def download_data(region: str, save_file: str | Path) -> None:

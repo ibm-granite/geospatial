@@ -1,12 +1,12 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit #ruff
-    rev: v0.3.5
+    rev: v0.14.5
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix, --select, I, --line-length=79]
       - id: ruff-format
   - repo: https://github.com/ibm/detect-secrets
-    rev: 0.13.1+ibm.61.dss
+    rev: 0.13.1+ibm.64.dss
     hooks:
       - id: detect-secrets 
         args: [--baseline, .secrets.baseline, --use-all-plugins]
