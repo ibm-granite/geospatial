@@ -12,7 +12,7 @@ requires-python = ">=3.12"
 keywords = ["fine-tuning", "geospatial foundation models", "ocean-colour"]
 
 dependencies = [
-  "terratorch==v1.1",
+  "terratorch==v1.1.1",
 ]
 
 [project.optional-dependencies]
