@@ -10,4 +10,12 @@ repos:
     hooks:
       - id: detect-secrets 
         args: [--baseline, .secrets.baseline, --use-all-plugins]
-  
+  - repo: local
+    hooks:
+      - id: uv-compile-all-projects
+        name: Resolve dependencies for mend scan
+        entry: uv pip compile --output-file requirements.txt ./granite-geospatial-ocean/pyproject.toml ./uki-flooddetection/pyproject.toml
+        language: system
+        files: '^(granite-geospatial-ocean|uki-flooddetection)/pyproject\.toml$'
+        pass_filenames: false
+        always_run: true

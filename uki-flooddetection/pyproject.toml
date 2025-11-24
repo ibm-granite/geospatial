@@ -14,9 +14,9 @@ keywords = ["fine-tuning", "geospatial foundation models", "flood segmentation"]
 dependencies = [
   "torch==2.1.0",
   "torchvision==0.16.0",
-  "terratorch @ git+https://github.com/IBM/terratorch.git@6d97521 ",
+  "terratorch==v1.1",
   "lightning-utilities==0.11.3.post",
-  "albumentations==1.4.3",
+  # "albumentations==1.4.3",
   "huggingface_hub",
   "jupyter",
   "matplotlib",
